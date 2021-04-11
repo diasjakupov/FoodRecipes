@@ -3,4 +3,10 @@
     <string name="recipes">Recipes</string>
     <string name="favorite">Favorite</string>
     <string name="food_jokes">Food Jokes</string>
+    <string name="floatingbutton">floatingButton</string>
+    <string name="no_internet_connection">no internet connection</string>
+    <string name="like_image">like image</string>
+    <string name="time_image">time image</string>
+    <string name="leaf_image">leaf image</string>
+    <string name="recipe_item_image">recipe item image</string>
 </resources>
