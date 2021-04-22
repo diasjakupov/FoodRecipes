@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ExtendedIngredient(
     val aisle: String,
-    val amount: Int,
+    val amount: Double,
     val consistency: String,
     val image: String,
     val name: String,

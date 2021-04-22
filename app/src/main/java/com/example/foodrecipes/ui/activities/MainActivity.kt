@@ -11,9 +11,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.foodrecipes.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var bottomNav:BottomNavigationView

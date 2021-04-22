@@ -1,5 +1,6 @@
 package com.example.foodrecipes.data.repository
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
 import com.example.foodrecipes.data.network.datasource.RemoteDataSource
@@ -11,8 +12,8 @@ import javax.inject.Inject
 
 @ActivityRetainedScoped
 class RepositoryImpl @Inject constructor(
-    val remoteDataSource: RemoteDataSource,
-    val InternetConnection: InternetConnection
+        private val remoteDataSource: RemoteDataSource,
+        private val InternetConnection: InternetConnection
 ):Repository {
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
 
@@ -20,7 +21,8 @@ class RepositoryImpl @Inject constructor(
         recipesResponse.value=NetworkResult.Loading()
         if(InternetConnection.hasInternetConnection()){
             try {
-                val response=remoteDataSource.getRecipies(queries)
+                val response=remoteDataSource.getRecipes(queries)
+
                 recipesResponse.value=handleFoodRecipesResponse(response)
             }catch (e: Exception){
                 recipesResponse.value=NetworkResult.Error("Not Found")

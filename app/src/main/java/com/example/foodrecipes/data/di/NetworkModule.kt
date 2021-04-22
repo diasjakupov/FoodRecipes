@@ -1,6 +1,8 @@
 package com.example.foodrecipes.data.di
 
+import android.util.Log
 import com.example.foodrecipes.MyApplication
+import com.example.foodrecipes.data.API_KEY
 import com.example.foodrecipes.data.BASE_URL
 import com.example.foodrecipes.data.network.api.FoodRecipeApi
 import dagger.Module
@@ -9,6 +11,7 @@ import dagger.hilt.DefineComponent
 import dagger.hilt.InstallIn
 import dagger.hilt.android.internal.managers.ApplicationComponentManager
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,9 +27,22 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttpClient():OkHttpClient{
+        val interceptor= Interceptor{
+            val url=it.request()
+                    .url().newBuilder()
+                    .addQueryParameter("apiKey", API_KEY)
+                    .build()
+
+            val request=it.request()
+                    .newBuilder()
+                    .url(url)
+                    .build()
+            return@Interceptor it.proceed(request)
+        }
         return OkHttpClient.Builder()
                 .readTimeout(15, TimeUnit.SECONDS)
                 .connectTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(interceptor)
                 .build()
     }
 

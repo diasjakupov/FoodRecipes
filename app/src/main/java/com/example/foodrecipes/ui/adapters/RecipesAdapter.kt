@@ -3,9 +3,11 @@ package com.example.foodrecipes.ui.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
 import com.example.foodrecipes.data.db.models.Result
+import com.example.foodrecipes.data.utils.RecipeDiffUtils
 import com.example.foodrecipes.databinding.RecipeItemBinding
 
 class RecipesAdapter: RecyclerView.Adapter<RecipesAdapter.ViewHolder>() {
@@ -26,8 +28,10 @@ class RecipesAdapter: RecyclerView.Adapter<RecipesAdapter.ViewHolder>() {
     }
 
     fun updateData(newRecipes:FoodRecipeResponse){
+        val recipesDiffUtils=RecipeDiffUtils(recipe, newRecipes.results)
+        val diffUtilResult=DiffUtil.calculateDiff(recipesDiffUtils)
         recipe=newRecipes.results
-        notifyDataSetChanged()
+        diffUtilResult.dispatchUpdatesTo(this)
     }
 
     class ViewHolder(private val binding: RecipeItemBinding) : RecyclerView.ViewHolder(binding.root){
