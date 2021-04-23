@@ -1,6 +1,7 @@
 package com.example.foodrecipes.ui.fragments.recipes
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -40,19 +41,17 @@ class RecipesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvShimmer=mView.recipe_rv
         adapter= RecipesAdapter()
-
-
         setupRecyclerView()
-        requestApiResponse()
+        getRecipesEntities()
     }
 
     private fun requestApiResponse(){
-        viewModel.getRecipes(applyQueries())
+        viewModel.getRecipes(viewModel.applyQueries())
         viewModel.recipeResponse.observe(viewLifecycleOwner, {response->
             when(response){
                 is NetworkResult.Success->{
                     disableShimmerEffect()
-                    response.data?.let { adapter.updateData(it) }
+                    response.data?.let { adapter.updateData(it.results) }
                 }
                 is NetworkResult.Error->{
                     disableShimmerEffect()
@@ -69,18 +68,18 @@ class RecipesFragment : Fragment() {
         })
     }
 
-
-    private fun applyQueries():HashMap<String, String>{
-        val queries: HashMap<String, String> = HashMap()
-
-        queries["number"]="50"
-        queries["type"]="snack"
-        queries["fillIngredients"]="true"
-        queries["addRecipeInformation"]="true"
-        queries["diet"]="true"
-        return queries
+    private fun getRecipesEntities(){
+        viewModel.recipeEntities.observe(viewLifecycleOwner, {
+            if(it.isEmpty()){
+                Log.e("TAG", "request")
+                requestApiResponse()
+            }else{
+                Log.e("TAG", "get database")
+                adapter.updateData(it)
+                disableShimmerEffect()
+            }
+        })
     }
-
     private fun setupRecyclerView(){
         rvShimmer.adapter=adapter
         rvShimmer.layoutManager=LinearLayoutManager(this.context)
