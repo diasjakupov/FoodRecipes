@@ -44,6 +44,7 @@ class RecipesItemBinding {
         fun loadImage(imageView:ImageView, url:String){
             imageView.load(url){
                 crossfade(600)
+                error(R.drawable.ic_error)
             }
         }
     }

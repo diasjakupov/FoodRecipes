@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodrecipes.R
 import com.example.foodrecipes.data.utils.NetworkResult
+import com.example.foodrecipes.databinding.FragmentRecipesBinding
 import com.example.foodrecipes.ui.adapters.RecipesAdapter
 import com.todkars.shimmer.ShimmerRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,24 +23,26 @@ import javax.inject.Inject
 class RecipesFragment : Fragment() {
 
     private val viewModel:RecipesFragmentViewModel by viewModels()
-    private lateinit var mView:View
     private lateinit var adapter: RecipesAdapter
     private lateinit var rvShimmer: ShimmerRecyclerView
+    private var _binding: FragmentRecipesBinding?=null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        mView= inflater.inflate(R.layout.fragment_recipes, container, false)
+        _binding= FragmentRecipesBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner=this
+        binding.viewmodel=viewModel
 
-
-        return mView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvShimmer=mView.recipe_rv
+        rvShimmer=binding.recipeRv
         adapter= RecipesAdapter()
         setupRecyclerView()
         getRecipesEntities()
@@ -92,6 +95,11 @@ class RecipesFragment : Fragment() {
 
     private fun disableShimmerEffect(){
         rvShimmer.hideShimmer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding=null
     }
 
 }

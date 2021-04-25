@@ -4,8 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.foodrecipes.data.db.models.RecipeResult
-import com.example.foodrecipes.data.db.models.entities.RecipeEntity
+import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import kotlinx.coroutines.flow.Flow
 
 

@@ -7,8 +7,7 @@ import androidx.lifecycle.asLiveData
 import com.example.foodrecipes.data.datasource.LocalDataSource
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
 import com.example.foodrecipes.data.datasource.RemoteDataSource
-import com.example.foodrecipes.data.db.models.RecipeResult
-import com.example.foodrecipes.data.db.models.entities.RecipeEntity
+import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.utils.NetworkResult
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import retrofit2.Response
@@ -22,11 +21,10 @@ class RepositoryImpl @Inject constructor(
         private val localDataSource: LocalDataSource
 ) : Repository {
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
-
     val recipeEntities: LiveData<List<RecipeResult>> =localDataSource.getRecipes().asLiveData()
 
-    override suspend fun insertRecipes(recipesEntity: List<RecipeResult>) {
-        localDataSource.insertRecipes(recipesEntity)
+    override suspend fun insertRecipes(recipeEntity: List<RecipeResult>) {
+        localDataSource.insertRecipes(recipeEntity)
     }
 
     override suspend fun getResponseSafeCall(queries: Map<String, String>) {

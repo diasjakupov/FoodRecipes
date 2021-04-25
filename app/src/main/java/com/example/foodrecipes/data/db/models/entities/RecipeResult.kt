@@ -1,11 +1,11 @@
-package com.example.foodrecipes.data.db.models
+package com.example.foodrecipes.data.db.models.entities
 
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.example.foodrecipes.data.db.models.ExtendedIngredient
 import com.example.foodrecipes.data.db.models.converters.IngredientsTypeConverter
-import com.google.gson.annotations.SerializedName
 
 
 @Entity(tableName = "recipe_table")

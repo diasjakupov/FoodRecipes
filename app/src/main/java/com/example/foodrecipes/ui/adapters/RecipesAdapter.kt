@@ -4,8 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.foodrecipes.data.db.models.FoodRecipeResponse
-import com.example.foodrecipes.data.db.models.RecipeResult
+import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.utils.RecipeDiffUtils
 import com.example.foodrecipes.databinding.RecipeItemBinding
 
@@ -34,7 +33,7 @@ class RecipesAdapter: RecyclerView.Adapter<RecipesAdapter.ViewHolder>() {
     }
 
     class ViewHolder(private val binding: RecipeItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(result:RecipeResult){
+        fun bind(result: RecipeResult){
             binding.result=result
             binding.executePendingBindings()
         }

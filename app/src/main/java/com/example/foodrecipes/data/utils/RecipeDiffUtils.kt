@@ -1,7 +1,7 @@
 package com.example.foodrecipes.data.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.foodrecipes.data.db.models.RecipeResult
+import com.example.foodrecipes.data.db.models.entities.RecipeResult
 
 class RecipeDiffUtils(
         private val oldList:List<RecipeResult>,

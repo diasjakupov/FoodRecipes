@@ -6,8 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
-import com.example.foodrecipes.data.db.models.RecipeResult
-import com.example.foodrecipes.data.db.models.entities.RecipeEntity
+import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.repository.RepositoryImpl
 import com.example.foodrecipes.data.utils.Constant.ADD_RECIPE_INFO
 import com.example.foodrecipes.data.utils.Constant.DIET
