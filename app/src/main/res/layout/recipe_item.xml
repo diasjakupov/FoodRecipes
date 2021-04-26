@@ -145,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                tools:text="Vegan"
+                android:text="@string/vegan"
                 applyVeganColor="@{result.vegan}"
                 android:textAlignment="center"
                 app:layout_constraintStart_toEndOf="@+id/timeTextView"
