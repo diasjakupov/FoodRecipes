@@ -7,4 +7,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="custom_chip_style" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="backgroundColor">@color/chip_background_color</item>
+        <item name="checkedIconTint">@color/chip_text_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+    </style>
 </resources>

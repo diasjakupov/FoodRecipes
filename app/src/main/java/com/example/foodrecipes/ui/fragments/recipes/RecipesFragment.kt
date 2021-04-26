@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodrecipes.R
 import com.example.foodrecipes.data.utils.NetworkResult
@@ -36,6 +37,10 @@ class RecipesFragment : Fragment() {
         _binding= FragmentRecipesBinding.inflate(inflater, container, false)
         binding.lifecycleOwner=this
         binding.viewmodel=viewModel
+        binding.floatingActionButton.setOnClickListener {
+            findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
+        }
+
 
         return binding.root
     }
