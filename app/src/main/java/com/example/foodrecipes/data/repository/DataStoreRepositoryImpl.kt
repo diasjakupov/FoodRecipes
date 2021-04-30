@@ -1,6 +1,7 @@
 package com.example.foodrecipes.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.*
@@ -16,8 +17,8 @@ import java.io.IOException
 import java.lang.Exception
 import javax.inject.Inject
 
-@ActivityRetainedScoped
-class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context):
+
+class DataStoreRepositoryImpl constructor(private val context: Context):
     DataStoreRepository
 {
     private object PreferencesKeys{
@@ -49,6 +50,7 @@ class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext private va
         }
     }
         .map { preferences ->
+            Log.e("TAG", "$preferences")
         val selectedMealType = preferences[PreferencesKeys.selectedMealType] ?: DEFAULT_MEAL_TYPE
         val selectedMealTypeId = preferences[PreferencesKeys.selectedMealTypeId] ?: 0
         val selectedDietType = preferences[PreferencesKeys.selectedDietType] ?: DEFAULT_DIET_TYPE

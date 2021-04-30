@@ -2,7 +2,7 @@ package com.example.foodrecipes.data.utils
 
 
 object Constant{
-    const val API_KEY="b206d1ef00574998bcd33adab9cc7b28"
+    const val API_KEY="72bdb22e370a4a2e938f11856d0c3d42"
     const val BASE_URL="https://api.spoonacular.com/"
     const val NUMBER_OF_RECIPES="number"
     const val MEAL_TYPE="type"

@@ -1,6 +1,7 @@
 package com.example.foodrecipes.ui.fragments.recipes
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,60 +29,63 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecipesFragmentViewModel @Inject constructor(
-        private val repositoryImpl: RepositoryImpl,
-        private val dataStoreRepository: DataStoreRepository,
-        application: Application
+    private val repositoryImpl: RepositoryImpl,
+    private val dataStoreRepository: DataStoreRepository,
+    application: Application
 ) : AndroidViewModel(application) {
-    private var mealType= DEFAULT_MEAL_TYPE
-    private var dietType= DEFAULT_DIET_TYPE
+    private var mealType = DEFAULT_MEAL_TYPE
+    private var dietType = DEFAULT_DIET_TYPE
 
-    private var _recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
+    private var _recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> =
+        MutableLiveData()
     val recipeResponse: LiveData<NetworkResult<FoodRecipeResponse>>
         get() = _recipesResponse
 
-    private var _recipeEntities: MutableLiveData<List<RecipeResult>> = MutableLiveData()
-    val recipeEntities: LiveData<List<RecipeResult>>
+    private var _recipeEntities: MutableLiveData<List<RecipeResult>?> = MutableLiveData(null)
+    val recipeEntities: LiveData<List<RecipeResult>?>
         get() = _recipeEntities
 
-    private val readMealAndDietType=dataStoreRepository.readMealAndDietType
+    val readMealAndDietType = dataStoreRepository.readMealAndDietType
 
     init {
         repositoryImpl.apply {
-            recipesResponse.observeForever{
-                _recipesResponse.value=it
+            recipesResponse.observeForever {
+                _recipesResponse.value = it
             }
-            recipeEntities.observeForever{
-                _recipeEntities.value=it
+            recipeEntities.observeForever {
+                if (it.isNotEmpty()) {
+                    Log.e("TAG", "saving data to live")
+                    _recipeEntities.value = it
+                }
             }
         }
     }
 
 
-    fun applyQueries():HashMap<String, String>{
+    fun applyQueries(): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO){
             readMealAndDietType.collect {
-                mealType=it.selectedMealType
-                dietType=it.selectedDietType
+                mealType = it.selectedMealType
+                dietType = it.selectedDietType
+                queries[NUMBER_OF_RECIPES] = DEFAULT_NUMBER
+                queries[MEAL_TYPE] = mealType
+                queries[FILL_ING] = "true"
+                queries[ADD_RECIPE_INFO] = "true"
+                queries[DIET_TYPE] = dietType
             }
         }
-
-        queries[NUMBER_OF_RECIPES]=DEFAULT_NUMBER
-        queries[MEAL_TYPE] = mealType
-        queries[FILL_ING]="true"
-        queries[ADD_RECIPE_INFO]="true"
-        queries[DIET_TYPE] = dietType
         return queries
     }
 
-    fun getRecipes(queries:Map<String, String>)=viewModelScope.launch {
+    fun getRecipes(queries: Map<String, String>) = viewModelScope.launch {
         repositoryImpl.getResponseSafeCall(queries)
     }
 
     fun saveMealAndDietType(
-        mealType:String, mealTypeId:Int,dietType:String, dietTypeId:Int
-    )=viewModelScope.launch(Dispatchers.IO){
+        mealType: String, mealTypeId: Int, dietType: String, dietTypeId: Int
+    ) = viewModelScope.launch(Dispatchers.IO) {
         dataStoreRepository.saveMealAndDietType(mealType, mealTypeId, dietType, dietTypeId)
     }
 

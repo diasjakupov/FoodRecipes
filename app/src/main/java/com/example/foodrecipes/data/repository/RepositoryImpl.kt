@@ -10,6 +10,7 @@ import com.example.foodrecipes.data.datasource.RemoteDataSource
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.utils.NetworkResult
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.flow.collect
 import retrofit2.Response
 import java.lang.Exception
 import javax.inject.Inject
@@ -20,10 +21,12 @@ class RepositoryImpl @Inject constructor(
         private val InternetConnection: InternetConnection,
         private val localDataSource: LocalDataSource
 ) : Repository {
+
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
-    val recipeEntities: LiveData<List<RecipeResult>> =localDataSource.getRecipes().asLiveData()
+    val recipeEntities: LiveData<List<RecipeResult>> = localDataSource.getRecipes().asLiveData()
 
     override suspend fun insertRecipes(recipeEntity: List<RecipeResult>) {
+        localDataSource.deleteRecipes()
         localDataSource.insertRecipes(recipeEntity)
     }
 
@@ -33,13 +36,13 @@ class RepositoryImpl @Inject constructor(
             try {
                 val response = remoteDataSource.getRecipes(queries)
                 recipesResponse.value = handleFoodRecipesResponse(response)
-
                 val foodRecipe=recipesResponse.value!!.data
-
                 if(foodRecipe != null){
+                    Log.e("TAG", "${foodRecipe.results.map { it.title }}")
                     startCaching(foodRecipe)
                 }
             } catch (e: Exception) {
+                Log.e("TAG", e.toString())
                 recipesResponse.value = NetworkResult.Error("Not Found")
             }
 
@@ -47,6 +50,7 @@ class RepositoryImpl @Inject constructor(
             recipesResponse.value = NetworkResult.Error("No Internet Connection")
         }
     }
+
 
     private fun handleFoodRecipesResponse(response: Response<FoodRecipeResponse>): NetworkResult<FoodRecipeResponse> {
         when {
@@ -69,7 +73,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     private suspend fun startCaching(foodRecipeResponse: FoodRecipeResponse){
-        Log.e("TAG", "start caching ${foodRecipeResponse.results}")
+        Log.e("TAG", "start caching ${foodRecipeResponse.results.map { it.title }}")
         insertRecipes(foodRecipeResponse.results)
     }
 }

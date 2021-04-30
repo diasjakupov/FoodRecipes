@@ -112,4 +112,6 @@ dependencies {
     // Jsoup
     implementation 'org.jsoup:jsoup:1.13.1'
 
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.32"
+
 }

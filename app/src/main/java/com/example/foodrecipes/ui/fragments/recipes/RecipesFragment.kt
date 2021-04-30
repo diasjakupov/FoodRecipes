@@ -7,23 +7,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodrecipes.R
 import com.example.foodrecipes.data.utils.NetworkResult
+import com.example.foodrecipes.data.utils.observeOnce
 import com.example.foodrecipes.databinding.FragmentRecipesBinding
 import com.example.foodrecipes.ui.adapters.RecipesAdapter
 import com.todkars.shimmer.ShimmerRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_recipes.view.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class RecipesFragment : Fragment() {
 
-    private val viewModel:RecipesFragmentViewModel by viewModels()
+    private val args by navArgs<RecipesFragmentArgs>()
+    private val viewModel:RecipesFragmentViewModel by activityViewModels()
+    private var oldArgs: Boolean?=null
     private lateinit var adapter: RecipesAdapter
     private lateinit var rvShimmer: ShimmerRecyclerView
     private var _binding: FragmentRecipesBinding?=null
@@ -77,17 +86,24 @@ class RecipesFragment : Fragment() {
     }
 
     private fun getRecipesEntities(){
-        viewModel.recipeEntities.observe(viewLifecycleOwner, {
-            if(it.isEmpty()){
-                Log.e("TAG", "request")
-                requestApiResponse()
-            }else{
-                Log.e("TAG", "get database")
-                adapter.updateData(it)
-                disableShimmerEffect()
-            }
-        })
+        lifecycleScope.launch {
+            viewModel.recipeEntities.observeOnce(viewLifecycleOwner, {
+                Log.e("TAG", "${it?.isNotEmpty() == true}")
+                Log.e("TAG", "${!args.isFromBottomSheet}")
+                if(!args.isFromBottomSheet && it != null){
+                    Log.e("TAG", "get database ${it.map{ result-> result.title}}")
+                    adapter.updateData(it)
+                    disableShimmerEffect()
+                }else{
+                    Log.e("TAG", "request")
+                    oldArgs=args.isFromBottomSheet
+                    requestApiResponse()
+                }
+            })
+        }
     }
+
+
     private fun setupRecyclerView(){
         rvShimmer.adapter=adapter
         rvShimmer.layoutManager=LinearLayoutManager(this.context)

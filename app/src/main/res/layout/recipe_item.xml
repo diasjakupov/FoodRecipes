@@ -85,26 +85,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="36dp"
+                android:contentDescription="@string/like_image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/likeTextView"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/likeTextView"
+                app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
                 app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/ic_heart"
-                app:tint="@color/red"
-                android:contentDescription="@string/like_image" />
+                app:tint="@color/red" />
 
             <TextView
                 android:id="@+id/likeTextView"
+                setNumberOfLikes="@{result.aggregateLikes}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="100"
-                setNumberOfLikes="@{result.aggregateLikes}"
                 android:textAlignment="center"
                 android:textColor="@color/red"
                 app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
-                app:layout_constraintTop_toBottomOf="@+id/likeImageView" />
+                app:layout_constraintTop_toBottomOf="@+id/likeImageView"
+                tools:text="100" />
 
             <ImageView
                 android:id="@+id/timeImageView"
