@@ -20,6 +20,7 @@ class LocalDataSource @Inject constructor(
 
 
     suspend fun insertRecipes(recipes: List<RecipeResult>){
+        Log.e("TAG", "start caching local ${recipes.map { it.title }}")
         recipesDao.insert(recipes)
     }
 

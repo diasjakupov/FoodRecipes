@@ -7,5 +7,8 @@ interface DataStoreRepository {
         mealType:String, mealTypeId:Int,dietType:String, dietTypeId:Int
     )
 
+    suspend fun saveBackOnlineStatus(backOnline:Boolean)
+
     val readMealAndDietType:Flow<MealAndDietType>
+    val readOnlineStatus:Flow<Boolean>
 }

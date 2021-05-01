@@ -10,6 +10,7 @@ import com.example.foodrecipes.data.datasource.RemoteDataSource
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.utils.NetworkResult
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import retrofit2.Response
 import java.lang.Exception
@@ -25,9 +26,9 @@ class RepositoryImpl @Inject constructor(
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
     val recipeEntities: LiveData<List<RecipeResult>> = localDataSource.getRecipes().asLiveData()
 
-    override suspend fun insertRecipes(recipeEntity: List<RecipeResult>) {
+    override suspend fun insertRecipes(entities: List<RecipeResult>) {
         localDataSource.deleteRecipes()
-        localDataSource.insertRecipes(recipeEntity)
+        localDataSource.insertRecipes(entities)
     }
 
     override suspend fun getResponseSafeCall(queries: Map<String, String>) {
@@ -50,7 +51,6 @@ class RepositoryImpl @Inject constructor(
             recipesResponse.value = NetworkResult.Error("No Internet Connection")
         }
     }
-
 
     private fun handleFoodRecipesResponse(response: Response<FoodRecipeResponse>): NetworkResult<FoodRecipeResponse> {
         when {

@@ -2,10 +2,8 @@ package com.example.foodrecipes.ui.fragments.recipes
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import android.widget.Toast
+import androidx.lifecycle.*
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.repository.DataStoreRepository
@@ -36,16 +34,20 @@ class RecipesFragmentViewModel @Inject constructor(
     private var mealType = DEFAULT_MEAL_TYPE
     private var dietType = DEFAULT_DIET_TYPE
 
+    var networkStatus=false
+    var backOnline=false
+
     private var _recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> =
         MutableLiveData()
     val recipeResponse: LiveData<NetworkResult<FoodRecipeResponse>>
         get() = _recipesResponse
 
-    private var _recipeEntities: MutableLiveData<List<RecipeResult>?> = MutableLiveData(null)
+    private var _recipeEntities: MutableLiveData<List<RecipeResult>?> = MutableLiveData()
     val recipeEntities: LiveData<List<RecipeResult>?>
         get() = _recipeEntities
 
     val readMealAndDietType = dataStoreRepository.readMealAndDietType
+    val readOnlineStatus = dataStoreRepository.readOnlineStatus.asLiveData()
 
     init {
         repositoryImpl.apply {
@@ -87,6 +89,22 @@ class RecipesFragmentViewModel @Inject constructor(
         mealType: String, mealTypeId: Int, dietType: String, dietTypeId: Int
     ) = viewModelScope.launch(Dispatchers.IO) {
         dataStoreRepository.saveMealAndDietType(mealType, mealTypeId, dietType, dietTypeId)
+    }
+
+    private fun saveBackOnline(backOnline:Boolean)=viewModelScope.launch(Dispatchers.IO){
+        dataStoreRepository.saveBackOnlineStatus(backOnline)
+    }
+
+    fun showNetworkStatus(){
+        if(!networkStatus){
+            Toast.makeText(getApplication(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+            saveBackOnline(true)
+        }else if(networkStatus){
+            if(backOnline){
+                Toast.makeText(getApplication(), "We're back online", Toast.LENGTH_SHORT).show()
+                saveBackOnline(false)
+            }
+        }
     }
 
 }

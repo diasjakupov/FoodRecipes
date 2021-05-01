@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodrecipes.R
+import com.example.foodrecipes.data.utils.NetworkListener
 import com.example.foodrecipes.data.utils.NetworkResult
 import com.example.foodrecipes.data.utils.observeOnce
 import com.example.foodrecipes.databinding.FragmentRecipesBinding
@@ -23,6 +24,7 @@ import com.example.foodrecipes.ui.adapters.RecipesAdapter
 import com.todkars.shimmer.ShimmerRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_recipes.view.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -32,7 +34,7 @@ class RecipesFragment : Fragment() {
 
     private val args by navArgs<RecipesFragmentArgs>()
     private val viewModel:RecipesFragmentViewModel by activityViewModels()
-    private var oldArgs: Boolean?=null
+    private lateinit var networkListener: NetworkListener
     private lateinit var adapter: RecipesAdapter
     private lateinit var rvShimmer: ShimmerRecyclerView
     private var _binding: FragmentRecipesBinding?=null
@@ -46,21 +48,38 @@ class RecipesFragment : Fragment() {
         _binding= FragmentRecipesBinding.inflate(inflater, container, false)
         binding.lifecycleOwner=this
         binding.viewmodel=viewModel
-        binding.floatingActionButton.setOnClickListener {
-            findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
-        }
+        rvShimmer=binding.recipeRv
+        adapter= RecipesAdapter()
+        setupRecyclerView()
 
+        viewModel.readOnlineStatus.observe(viewLifecycleOwner, {
+             viewModel.backOnline=it
+        })
+
+        binding.floatingActionButton.setOnClickListener {
+            if(viewModel.networkStatus){
+                findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
+            }else{
+                viewModel.showNetworkStatus()
+            }
+        }
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvShimmer=binding.recipeRv
-        adapter= RecipesAdapter()
-        setupRecyclerView()
-        getRecipesEntities()
+        lifecycleScope.launch {
+            networkListener= NetworkListener()
+            networkListener.checkNetworkConnection(requireContext()).collect {
+                Log.e("TAG", it.toString())
+                viewModel.networkStatus=it
+                viewModel.showNetworkStatus()
+                getRecipesEntities()
+            }
+        }
     }
+
 
     private fun requestApiResponse(){
         viewModel.getRecipes(viewModel.applyQueries())
@@ -88,21 +107,17 @@ class RecipesFragment : Fragment() {
     private fun getRecipesEntities(){
         lifecycleScope.launch {
             viewModel.recipeEntities.observeOnce(viewLifecycleOwner, {
-                Log.e("TAG", "${it?.isNotEmpty() == true}")
-                Log.e("TAG", "${!args.isFromBottomSheet}")
                 if(!args.isFromBottomSheet && it != null){
-                    Log.e("TAG", "get database ${it.map{ result-> result.title}}")
+                    Log.e("TAG", "get database")
                     adapter.updateData(it)
                     disableShimmerEffect()
                 }else{
                     Log.e("TAG", "request")
-                    oldArgs=args.isFromBottomSheet
                     requestApiResponse()
                 }
             })
         }
     }
-
 
     private fun setupRecyclerView(){
         rvShimmer.adapter=adapter

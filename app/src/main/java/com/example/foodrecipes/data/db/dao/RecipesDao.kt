@@ -14,7 +14,7 @@ interface RecipesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recipes:List<RecipeResult>)
 
-    @Query("SELECT * FROM recipe_table ORDER By id ASC")
+    @Query("SELECT * FROM recipe_table ORDER By title ASC")
     fun getRecipes():Flow<List<RecipeResult>>
 
     @Query("DELETE FROM recipe_table")

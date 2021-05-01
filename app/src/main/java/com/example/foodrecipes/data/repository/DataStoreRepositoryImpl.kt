@@ -21,14 +21,17 @@ import javax.inject.Inject
 class DataStoreRepositoryImpl constructor(private val context: Context):
     DataStoreRepository
 {
+
     private object PreferencesKeys{
         val selectedMealType= stringPreferencesKey("MEAL_TYPE")
         val selectedMealTypeId= intPreferencesKey("MEAL_TYPE_ID")
         val selectedDietType= stringPreferencesKey("DIET_TYPE")
         val selectedDietTypeId= intPreferencesKey("DIET_TYPE_ID")
+        val backOnline= booleanPreferencesKey("BACK_ONLINE")
     }
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "foody_preferences")
+    private val Context.dataStore: DataStore<Preferences>
+                    by preferencesDataStore(name = "foody_preferences")
 
     override suspend fun saveMealAndDietType(
         mealType:String, mealTypeId:Int,dietType:String, dietTypeId:Int
@@ -41,6 +44,12 @@ class DataStoreRepositoryImpl constructor(private val context: Context):
         }
     }
 
+    override suspend fun saveBackOnlineStatus(backOnline: Boolean) {
+        context.dataStore.edit {
+            it[PreferencesKeys.backOnline]=backOnline
+        }
+    }
+
     override val readMealAndDietType:Flow<MealAndDietType> = context.dataStore.data
         .catch {exc->
         if(exc is IOException){
@@ -50,7 +59,6 @@ class DataStoreRepositoryImpl constructor(private val context: Context):
         }
     }
         .map { preferences ->
-            Log.e("TAG", "$preferences")
         val selectedMealType = preferences[PreferencesKeys.selectedMealType] ?: DEFAULT_MEAL_TYPE
         val selectedMealTypeId = preferences[PreferencesKeys.selectedMealTypeId] ?: 0
         val selectedDietType = preferences[PreferencesKeys.selectedDietType] ?: DEFAULT_DIET_TYPE
@@ -62,4 +70,18 @@ class DataStoreRepositoryImpl constructor(private val context: Context):
             selectedDietTypeId
         )
     }
+
+    override val readOnlineStatus: Flow<Boolean> = context.dataStore.data
+        .catch {exc->
+            if(exc is IOException){
+                emit(emptyPreferences())
+            }else{
+                throw exc
+            }
+        }
+        .map {
+            val onlineStatus=it[PreferencesKeys.backOnline] ?: false
+            onlineStatus
+        }
+
 }
