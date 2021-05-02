@@ -51,8 +51,11 @@
             android:alpha="0.5"
             android:src="@drawable/ic_sad"
             android:visibility="invisible"
+
             readApiResponseImage="@{viewmodel.recipeResponse}"
             readDataImage="@{viewmodel.recipeEntities}"
+
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,8 +69,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:alpha="0.5"
+
             readApiResponseText="@{viewmodel.recipeResponse}"
             readDataText="@{viewmodel.recipeEntities}"
+
+
             tools:text="No Internet Connection"
             android:textSize="18sp"
             android:textStyle="bold"

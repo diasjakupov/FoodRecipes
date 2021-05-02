@@ -24,6 +24,7 @@ class RepositoryImpl @Inject constructor(
 ) : Repository {
 
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
+    var searchedRecipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
     val recipeEntities: LiveData<List<RecipeResult>> = localDataSource.getRecipes().asLiveData()
 
     override suspend fun insertRecipes(entities: List<RecipeResult>) {
@@ -39,12 +40,33 @@ class RepositoryImpl @Inject constructor(
                 recipesResponse.value = handleFoodRecipesResponse(response)
                 val foodRecipe=recipesResponse.value!!.data
                 if(foodRecipe != null){
-                    Log.e("TAG", "${foodRecipe.results.map { it.title }}")
                     startCaching(foodRecipe)
                 }
             } catch (e: Exception) {
                 Log.e("TAG", e.toString())
                 recipesResponse.value = NetworkResult.Error("Not Found")
+            }
+
+        } else {
+            recipesResponse.value = NetworkResult.Error("No Internet Connection")
+        }
+    }
+
+    override suspend fun searchRecipeSafeCall(queries: Map<String, String>) {
+        searchedRecipesResponse.value = NetworkResult.Loading()
+        if (InternetConnection.hasInternetConnection()) {
+            try {
+                val response = remoteDataSource.searchRecipes(queries)
+                Log.e("TAG", "from searching ${response.body()}")
+                if(response.body()?.results?.size == 0){
+                    Log.e("TAG", "size equals to zero")
+                    searchedRecipesResponse.value= NetworkResult.Error("Not Found")
+                }else{
+                    Log.e("TAG", "size doesn't equal to zero")
+                    searchedRecipesResponse.value = handleFoodRecipesResponse(response)
+                }
+            } catch (e: Exception) {
+                searchedRecipesResponse.value = NetworkResult.Error("Not Found")
             }
 
         } else {

@@ -17,6 +17,7 @@ import com.example.foodrecipes.data.utils.Constant.DIET_TYPE
 import com.example.foodrecipes.data.utils.Constant.FILL_ING
 import com.example.foodrecipes.data.utils.Constant.MEAL_TYPE
 import com.example.foodrecipes.data.utils.Constant.NUMBER_OF_RECIPES
+import com.example.foodrecipes.data.utils.Constant.SEARCH
 
 import com.example.foodrecipes.data.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,31 +38,27 @@ class RecipesFragmentViewModel @Inject constructor(
     var networkStatus=false
     var backOnline=false
 
-    private var _recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> =
-        MutableLiveData()
-    val recipeResponse: LiveData<NetworkResult<FoodRecipeResponse>>
-        get() = _recipesResponse
 
-    private var _recipeEntities: MutableLiveData<List<RecipeResult>?> = MutableLiveData()
-    val recipeEntities: LiveData<List<RecipeResult>?>
-        get() = _recipeEntities
+    val recipeResponse: LiveData<NetworkResult<FoodRecipeResponse>> =
+        Transformations.switchMap(repositoryImpl.recipesResponse) {
+            return@switchMap MutableLiveData(it)
+        }
+
+    val searchedRecipesResponse: LiveData<NetworkResult<FoodRecipeResponse>> =
+        Transformations.switchMap(repositoryImpl.searchedRecipesResponse) {
+            Log.e("TAG", "viewModel ${it}")
+            return@switchMap MutableLiveData(it)
+        }
+
+
+    val recipeEntities: LiveData<List<RecipeResult>?> =
+        Transformations.switchMap(repositoryImpl.recipeEntities) {
+        return@switchMap MutableLiveData(it)
+    }
+
 
     val readMealAndDietType = dataStoreRepository.readMealAndDietType
     val readOnlineStatus = dataStoreRepository.readOnlineStatus.asLiveData()
-
-    init {
-        repositoryImpl.apply {
-            recipesResponse.observeForever {
-                _recipesResponse.value = it
-            }
-            recipeEntities.observeForever {
-                if (it.isNotEmpty()) {
-                    Log.e("TAG", "saving data to live")
-                    _recipeEntities.value = it
-                }
-            }
-        }
-    }
 
 
     fun applyQueries(): HashMap<String, String> {
@@ -71,18 +68,43 @@ class RecipesFragmentViewModel @Inject constructor(
             readMealAndDietType.collect {
                 mealType = it.selectedMealType
                 dietType = it.selectedDietType
-                queries[NUMBER_OF_RECIPES] = DEFAULT_NUMBER
-                queries[MEAL_TYPE] = mealType
-                queries[FILL_ING] = "true"
-                queries[ADD_RECIPE_INFO] = "true"
-                queries[DIET_TYPE] = dietType
             }
         }
+
+        queries[NUMBER_OF_RECIPES] = DEFAULT_NUMBER
+        queries[MEAL_TYPE] = mealType
+        queries[FILL_ING] = "true"
+        queries[ADD_RECIPE_INFO] = "true"
+        queries[DIET_TYPE] = dietType
+        return queries
+    }
+
+    fun applySearchQueries(search:String): HashMap<String, String> {
+        val queries: HashMap<String, String> = HashMap()
+
+        viewModelScope.launch(Dispatchers.IO){
+            readMealAndDietType.collect {
+                mealType = it.selectedMealType
+                dietType = it.selectedDietType
+            }
+        }
+
+        queries[NUMBER_OF_RECIPES] = DEFAULT_NUMBER
+        queries[MEAL_TYPE] = mealType
+        queries[SEARCH] = search
+        queries[FILL_ING] = "true"
+        queries[ADD_RECIPE_INFO] = "true"
+        queries[DIET_TYPE] = dietType
         return queries
     }
 
     fun getRecipes(queries: Map<String, String>) = viewModelScope.launch {
         repositoryImpl.getResponseSafeCall(queries)
+    }
+
+    fun searchRecipes(queries: Map<String, String>)=viewModelScope.launch {
+        Log.e("TAG", "request search")
+        repositoryImpl.searchRecipeSafeCall(queries)
     }
 
     fun saveMealAndDietType(

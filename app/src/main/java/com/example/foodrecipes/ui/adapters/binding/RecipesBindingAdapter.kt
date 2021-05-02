@@ -13,7 +13,9 @@ import java.lang.Error
 class RecipesBindingAdapter {
 
     companion object{
-        @BindingAdapter("readApiResponseImage", "readDataImage", requireAll = true)
+        @BindingAdapter("readApiResponseImage",
+            "readDataImage",
+            requireAll = true)
         @JvmStatic
         fun errorImageVieVisibility(view:ImageView,
                                     response: NetworkResult<FoodRecipeResponse>?,
@@ -27,7 +29,9 @@ class RecipesBindingAdapter {
             }
         }
 
-        @BindingAdapter("readApiResponseText", "readDataText", requireAll = true)
+        @BindingAdapter("readApiResponseText",
+            "readDataText",
+            requireAll = true)
         @JvmStatic
         fun errorTextViewVisibility(view:TextView,
                                     response: NetworkResult<FoodRecipeResponse>?,
