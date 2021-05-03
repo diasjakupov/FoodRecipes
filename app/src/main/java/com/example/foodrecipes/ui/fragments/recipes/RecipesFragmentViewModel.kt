@@ -24,7 +24,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 @HiltViewModel
 class RecipesFragmentViewModel @Inject constructor(
@@ -60,17 +62,18 @@ class RecipesFragmentViewModel @Inject constructor(
     val readMealAndDietType = dataStoreRepository.readMealAndDietType
     val readOnlineStatus = dataStoreRepository.readOnlineStatus.asLiveData()
 
-
-    fun applyQueries(): HashMap<String, String> {
-        val queries: HashMap<String, String> = HashMap()
-
+    init{
         viewModelScope.launch(Dispatchers.IO){
             readMealAndDietType.collect {
                 mealType = it.selectedMealType
                 dietType = it.selectedDietType
             }
         }
+    }
 
+    fun applyQueries(): HashMap<String, String> {
+        val queries: HashMap<String, String> = HashMap()
+        
         queries[NUMBER_OF_RECIPES] = DEFAULT_NUMBER
         queries[MEAL_TYPE] = mealType
         queries[FILL_ING] = "true"
@@ -82,16 +85,9 @@ class RecipesFragmentViewModel @Inject constructor(
     fun applySearchQueries(search:String): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
 
-        viewModelScope.launch(Dispatchers.IO){
-            readMealAndDietType.collect {
-                mealType = it.selectedMealType
-                dietType = it.selectedDietType
-            }
-        }
-
         queries[NUMBER_OF_RECIPES] = DEFAULT_NUMBER
         queries[MEAL_TYPE] = mealType
-        queries[SEARCH] = search
+        queries[SEARCH] = search.toLowerCase(Locale.ROOT)
         queries[FILL_ING] = "true"
         queries[ADD_RECIPE_INFO] = "true"
         queries[DIET_TYPE] = dietType

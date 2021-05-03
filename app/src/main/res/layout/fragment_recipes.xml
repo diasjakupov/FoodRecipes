@@ -54,7 +54,7 @@
 
             readApiResponseImage="@{viewmodel.recipeResponse}"
             readDataImage="@{viewmodel.recipeEntities}"
-
+            searchedApiResponseImage="@{viewmodel.searchedRecipesResponse}"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +72,7 @@
 
             readApiResponseText="@{viewmodel.recipeResponse}"
             readDataText="@{viewmodel.recipeEntities}"
-
+            searchedApiResponseText="@{viewmodel.searchedRecipesResponse}"
 
             tools:text="No Internet Connection"
             android:textSize="18sp"

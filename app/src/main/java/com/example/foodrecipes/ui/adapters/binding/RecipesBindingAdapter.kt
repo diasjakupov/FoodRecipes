@@ -15,33 +15,42 @@ class RecipesBindingAdapter {
     companion object{
         @BindingAdapter("readApiResponseImage",
             "readDataImage",
+            "searchedApiResponseImage",
             requireAll = true)
         @JvmStatic
         fun errorImageVieVisibility(view:ImageView,
                                     response: NetworkResult<FoodRecipeResponse>?,
-                                    data:List<RecipeResult>?){
+                                    data:List<RecipeResult>?,
+                                    search: NetworkResult<FoodRecipeResponse>?){
             if(response is NetworkResult.Error && data.isNullOrEmpty()){
                 view.visibility= View.VISIBLE
-            }else if(response is NetworkResult.Loading){
+            }else if(search is NetworkResult.Error){
+                view.visibility= View.VISIBLE
+            }else if(response is NetworkResult.Loading || search is NetworkResult.Loading){
                 view.visibility= View.INVISIBLE
-            }else if(response is NetworkResult.Success){
+            }else if(response is NetworkResult.Success || search is NetworkResult.Success){
                 view.visibility= View.INVISIBLE
             }
         }
 
         @BindingAdapter("readApiResponseText",
             "readDataText",
+            "searchedApiResponseText",
             requireAll = true)
         @JvmStatic
         fun errorTextViewVisibility(view:TextView,
                                     response: NetworkResult<FoodRecipeResponse>?,
-                                    data:List<RecipeResult>?){
+                                    data:List<RecipeResult>?,
+                                    search: NetworkResult<FoodRecipeResponse>?){
             if(response is NetworkResult.Error && data.isNullOrEmpty()){
                 view.visibility= View.VISIBLE
                 view.text=response.message.toString()
-            }else if(response is NetworkResult.Loading){
+            }else if(search is NetworkResult.Error){
+                view.visibility= View.VISIBLE
+                view.text=search.message.toString()
+            }else if(response is NetworkResult.Loading || search is NetworkResult.Loading){
                 view.visibility= View.INVISIBLE
-            }else if(response is NetworkResult.Success){
+            }else if(response is NetworkResult.Success || search is NetworkResult.Success){
                 view.visibility= View.INVISIBLE
             }
         }
