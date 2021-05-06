@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.foodrecipes.R
 import com.example.foodrecipes.data.utils.Constant.DEFAULT_DIET_TYPE
@@ -18,6 +19,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.android.synthetic.main.fragment_recipes_bottom_sheet.view.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 
@@ -60,13 +63,16 @@ class RecipesBottomSheet : BottomSheetDialogFragment() {
 
         mView.apply_btn.setOnClickListener {
             Log.e("TAG", "saving $mealTypeChip and $dietTypeChip")
-            viewModel.saveMealAndDietType(mealType=mealTypeChip,
-                mealTypeId = mealTypeChipId,
-                dietType = dietTypeChip,
-                dietTypeId = dietTypeChipId)
-            val action=RecipesBottomSheetDirections.actionRecipesBottomSheetToRecipesFragment()
-            action.isFromBottomSheet=true
-            findNavController().navigate(action)
+            lifecycleScope.launch {
+                viewModel.saveMealAndDietType(mealType=mealTypeChip,
+                    mealTypeId = mealTypeChipId,
+                    dietType = dietTypeChip,
+                    dietTypeId = dietTypeChipId)
+            }.invokeOnCompletion {
+                val action=RecipesBottomSheetDirections.actionRecipesBottomSheetToRecipesFragment()
+                action.isFromBottomSheet=true
+                findNavController().navigate(action)
+            }
         }
 
         return mView

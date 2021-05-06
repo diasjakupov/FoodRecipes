@@ -27,11 +27,11 @@ import kotlinx.coroutines.launch
 class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private val args by navArgs<RecipesFragmentArgs>()
-    private val viewModel:RecipesFragmentViewModel by activityViewModels()
+    private val viewModel: RecipesFragmentViewModel by activityViewModels()
     private lateinit var networkListener: NetworkListener
     private lateinit var adapter: RecipesAdapter
     private lateinit var rvShimmer: ShimmerRecyclerView
-    private var _binding: FragmentRecipesBinding?=null
+    private var _binding: FragmentRecipesBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -39,22 +39,22 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding= FragmentRecipesBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner=this
-        binding.viewmodel=viewModel
-        rvShimmer=binding.recipeRv
-        adapter= RecipesAdapter()
+        _binding = FragmentRecipesBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        binding.viewmodel = viewModel
+        rvShimmer = binding.recipeRv
+        adapter = RecipesAdapter()
         setupRecyclerView()
         setHasOptionsMenu(true)
 
         viewModel.readOnlineStatus.observe(viewLifecycleOwner, {
-             viewModel.backOnline=it
+            viewModel.backOnline = it
         })
 
         binding.floatingActionButton.setOnClickListener {
-            if(viewModel.networkStatus){
+            if (viewModel.networkStatus) {
                 findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
-            }else{
+            } else {
                 viewModel.showNetworkStatus()
             }
         }
@@ -65,10 +65,10 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            networkListener= NetworkListener()
+            networkListener = NetworkListener()
             networkListener.checkNetworkConnection(requireContext()).collect {
                 Log.e("TAG", it.toString())
-                viewModel.networkStatus=it
+                viewModel.networkStatus = it
                 viewModel.showNetworkStatus()
                 getRecipesEntities()
             }
@@ -78,14 +78,14 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.recipes_menu, menu)
 
-        val search=menu.findItem(R.id.menu_search)
-        val searchView=search.actionView as SearchView
+        val search = menu.findItem(R.id.menu_search)
+        val searchView = search.actionView as SearchView
 
         searchView.setOnQueryTextListener(this)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if(query !=null){
+        if (query != null) {
             searchApiResponse(query)
         }
         return true
@@ -95,89 +95,93 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
         return true
     }
 
-    private fun requestApiResponse(){
+    private suspend fun requestApiResponse() {
         viewModel.getRecipes(viewModel.applyQueries())
-        viewModel.recipeResponse.observe(viewLifecycleOwner, {response->
-            when(response){
-                is NetworkResult.Success->{
+        viewModel.recipeResponse.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is NetworkResult.Success -> {
                     disableShimmerEffect()
                     response.data?.let { adapter.updateData(it.results) }
                 }
-                is NetworkResult.Error->{
+                is NetworkResult.Error -> {
                     disableShimmerEffect()
                     Toast.makeText(
-                            this.context,
-                            response.message.toString(),
-                            Toast.LENGTH_SHORT)
-                            .show()
+                        this.context,
+                        response.message.toString(),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
                 }
-                is NetworkResult.Loading->{
+                is NetworkResult.Loading -> {
                     showShimmerEffect()
                 }
             }
         })
     }
 
-    private fun searchApiResponse(search:String){
+    private fun searchApiResponse(search: String) {
         showShimmerEffect()
         viewModel.searchRecipes(viewModel.applySearchQueries(search))
-        viewModel.searchedRecipesResponse.observe(viewLifecycleOwner, {response->
-            Log.e("TAG", "${response is NetworkResult.Error }")
-            when(response){
-                is NetworkResult.Success->{
+        viewModel.searchedRecipesResponse.observe(viewLifecycleOwner, { response ->
+            Log.e("TAG", "${response is NetworkResult.Error}")
+            when (response) {
+                is NetworkResult.Success -> {
                     disableShimmerEffect()
                     response.data?.let { adapter.updateData(it.results) }
                 }
-                is NetworkResult.Error->{
+                is NetworkResult.Error -> {
                     disableShimmerEffect()
-                    if(response.data?.results?.size == 0 || response.data?.results?.size == null){
+                    if (response.data?.results?.size == 0 || response.data?.results?.size == null) {
                         adapter.updateData(emptyList())
                     }
                     Toast.makeText(
                         this.context,
                         response.message.toString(),
-                        Toast.LENGTH_SHORT)
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
-                is NetworkResult.Loading->{
+                is NetworkResult.Loading -> {
                     showShimmerEffect()
                 }
             }
         })
     }
 
-    private fun getRecipesEntities(){
-        lifecycleScope.launch {
-            viewModel.recipeEntities.observeOnce(viewLifecycleOwner, {
-                if(!args.isFromBottomSheet && it != null){
-                    Log.e("TAG", "get database")
-                    adapter.updateData(it)
-                    disableShimmerEffect()
-                }else{
-                    Log.e("TAG", "request")
+    private fun getRecipesEntities() {
+
+        viewModel.recipeEntities.observeOnce(viewLifecycleOwner, {
+            if (!args.isFromBottomSheet && it != null) {
+                Log.e("TAG", "get database")
+                adapter.updateData(it)
+                disableShimmerEffect()
+            } else {
+                Log.e("TAG", "request")
+                lifecycleScope.launch {
                     requestApiResponse()
                 }
-            })
-        }
+            }
+        })
+
     }
 
-    private fun setupRecyclerView(){
-        rvShimmer.adapter=adapter
-        rvShimmer.layoutManager=LinearLayoutManager(this.context)
+    private fun setupRecyclerView() {
+        rvShimmer.adapter = adapter
+        rvShimmer.layoutManager = LinearLayoutManager(this.context)
         showShimmerEffect()
     }
 
-    private fun showShimmerEffect(){
+    private fun showShimmerEffect() {
         rvShimmer.showShimmer()
     }
 
-    private fun disableShimmerEffect(){
+    private fun disableShimmerEffect() {
         rvShimmer.hideShimmer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding=null
+        _binding = null
     }
 
 

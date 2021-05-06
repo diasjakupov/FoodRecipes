@@ -1,15 +1,18 @@
 package com.example.foodrecipes.data.db.models.entities
 
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.foodrecipes.data.db.models.ExtendedIngredient
 import com.example.foodrecipes.data.db.models.converters.IngredientsTypeConverter
+import kotlinx.android.parcel.Parcelize
 
 
 @Entity(tableName = "recipe_table")
 @TypeConverters(IngredientsTypeConverter::class)
+@Parcelize
 data class RecipeResult(
         val aggregateLikes: Int?,
         val cheap: Boolean?,
@@ -26,4 +29,4 @@ data class RecipeResult(
         val vegan: Boolean?,
         val vegetarian: Boolean?,
         val veryHealthy: Boolean?
-)
+): Parcelable

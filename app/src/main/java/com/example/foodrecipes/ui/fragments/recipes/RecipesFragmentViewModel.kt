@@ -20,10 +20,11 @@ import com.example.foodrecipes.data.utils.Constant.NUMBER_OF_RECIPES
 import com.example.foodrecipes.data.utils.Constant.SEARCH
 
 import com.example.foodrecipes.data.utils.NetworkResult
+import com.example.foodrecipes.data.utils.observeOnce
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
@@ -42,43 +43,35 @@ class RecipesFragmentViewModel @Inject constructor(
 
 
     val recipeResponse: LiveData<NetworkResult<FoodRecipeResponse>> =
-        Transformations.switchMap(repositoryImpl.recipesResponse) {
-            return@switchMap MutableLiveData(it)
+        Transformations.map(repositoryImpl.recipesResponse) {
+            return@map it
         }
 
     val searchedRecipesResponse: LiveData<NetworkResult<FoodRecipeResponse>> =
-        Transformations.switchMap(repositoryImpl.searchedRecipesResponse) {
-            Log.e("TAG", "viewModel ${it}")
-            return@switchMap MutableLiveData(it)
+        Transformations.map(repositoryImpl.searchedRecipesResponse) {
+            return@map it
         }
 
 
     val recipeEntities: LiveData<List<RecipeResult>?> =
-        Transformations.switchMap(repositoryImpl.recipeEntities) {
-        return@switchMap MutableLiveData(it)
+        Transformations.map(repositoryImpl.recipeEntities) {
+        return@map it
     }
 
 
     val readMealAndDietType = dataStoreRepository.readMealAndDietType
     val readOnlineStatus = dataStoreRepository.readOnlineStatus.asLiveData()
 
-    init{
-        viewModelScope.launch(Dispatchers.IO){
-            readMealAndDietType.collect {
-                mealType = it.selectedMealType
-                dietType = it.selectedDietType
-            }
-        }
-    }
 
-    fun applyQueries(): HashMap<String, String> {
+
+    suspend fun applyQueries(): HashMap<String, String> {
         val queries: HashMap<String, String> = HashMap()
-        
         queries[NUMBER_OF_RECIPES] = DEFAULT_NUMBER
-        queries[MEAL_TYPE] = mealType
+        queries[MEAL_TYPE] = readMealAndDietType.first().selectedMealType
         queries[FILL_ING] = "true"
         queries[ADD_RECIPE_INFO] = "true"
-        queries[DIET_TYPE] = dietType
+        queries[DIET_TYPE] = readMealAndDietType.first().selectedDietType
+        Log.e("TAG", "apply queries2")
         return queries
     }
 
@@ -103,9 +96,9 @@ class RecipesFragmentViewModel @Inject constructor(
         repositoryImpl.searchRecipeSafeCall(queries)
     }
 
-    fun saveMealAndDietType(
+    suspend fun saveMealAndDietType(
         mealType: String, mealTypeId: Int, dietType: String, dietTypeId: Int
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    ) = withContext(viewModelScope.coroutineContext) {
         dataStoreRepository.saveMealAndDietType(mealType, mealTypeId, dietType, dietTypeId)
     }
 
@@ -124,5 +117,6 @@ class RecipesFragmentViewModel @Inject constructor(
             }
         }
     }
+
 
 }
