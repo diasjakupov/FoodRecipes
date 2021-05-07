@@ -12,8 +12,9 @@ import coil.load
 import com.example.foodrecipes.R
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.ui.fragments.recipes.RecipesFragmentDirections
+import org.jsoup.Jsoup
 
-class RecipesItemBinding {
+class ItemBinding {
     companion object{
 
         @BindingAdapter("onItemClick")
@@ -37,9 +38,9 @@ class RecipesItemBinding {
             view.text=value.toString()
         }
 
-        @BindingAdapter("applyVeganColor")
+        @BindingAdapter("applyColor")
         @JvmStatic
-        fun applyVeganColor(view: View, vegan:Boolean){
+        fun applyColor(view: View, vegan:Boolean){
             if(vegan){
                 when(view){
                     is TextView->{
@@ -59,6 +60,16 @@ class RecipesItemBinding {
                 crossfade(600)
                 error(R.drawable.ic_error)
             }
+        }
+
+        @BindingAdapter("setDetailSummary")
+        @JvmStatic
+        fun setSummary(view:TextView, data:String?){
+            if(data !=null){
+                val desc=Jsoup.parse(data).text()
+                view.text=desc
+            }
+
         }
     }
 }
