@@ -20,4 +20,9 @@
     <color name="ChipText">@color/darkGray</color>
     <color name="checkedChipBg">#206200EA</color>
     <color name="ChipBg">@color/lightGray</color>
+
+    <color name="strokeColor">@color/lightMediumGray</color>
+    <color name="cardIngBackground">@color/white</color>
+    <color name="actionBarBackgroundColor">@color/colorPrimary</color>
+    <color name="ingredientTitleColor">@color/darker</color>
 </resources>

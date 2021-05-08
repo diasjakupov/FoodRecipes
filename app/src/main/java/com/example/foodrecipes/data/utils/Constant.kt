@@ -4,6 +4,7 @@ package com.example.foodrecipes.data.utils
 object Constant{
     const val API_KEY="72bdb22e370a4a2e938f11856d0c3d42"
     const val BASE_URL="https://api.spoonacular.com/"
+    const val BASE_IMAGE_URL="https://spoonacular.com/cdn/ingredients_100x100/"
     const val NUMBER_OF_RECIPES="number"
     const val MEAL_TYPE="type"
     const val FILL_ING="fillIngredients"
