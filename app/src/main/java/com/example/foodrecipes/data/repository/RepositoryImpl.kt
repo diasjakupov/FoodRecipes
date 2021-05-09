@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import com.example.foodrecipes.data.datasource.LocalDataSource
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
 import com.example.foodrecipes.data.datasource.RemoteDataSource
+import com.example.foodrecipes.data.db.models.entities.FavoriteRecipe
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.utils.NetworkResult
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -26,10 +27,23 @@ class RepositoryImpl @Inject constructor(
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
     var searchedRecipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
     val recipeEntities: LiveData<List<RecipeResult>> = localDataSource.getRecipes().asLiveData()
+    val favoriteRecipeEntities: LiveData<List<FavoriteRecipe>> = localDataSource.getFavoriteRecipes().asLiveData()
 
     override suspend fun insertRecipes(entities: List<RecipeResult>) {
         localDataSource.deleteRecipes()
         localDataSource.insertRecipes(entities)
+    }
+
+    override suspend fun insertFavoriteRecipe(entity: FavoriteRecipe) {
+        localDataSource.insertFavoriteRecipes(entity)
+    }
+
+    override suspend fun deleteFavoriteRecipe(entity: FavoriteRecipe) {
+        localDataSource.deleteFavoriteRecipesByEntity(entity)
+    }
+
+    override suspend fun deleteAllFavoriteRecipes() {
+        localDataSource.deleteFavoriteRecipes()
     }
 
     override suspend fun getResponseSafeCall(queries: Map<String, String>) {

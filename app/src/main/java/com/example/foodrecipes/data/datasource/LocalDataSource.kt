@@ -2,7 +2,9 @@ package com.example.foodrecipes.data.datasource
 
 import android.util.Log
 import androidx.lifecycle.asLiveData
+import com.example.foodrecipes.data.db.dao.FavoriteRecipeDao
 import com.example.foodrecipes.data.db.dao.RecipesDao
+import com.example.foodrecipes.data.db.models.entities.FavoriteRecipe
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -15,9 +17,9 @@ import kotlin.reflect.jvm.internal.impl.resolve.constants.StringValue
 import kotlin.reflect.jvm.javaType
 
 class LocalDataSource @Inject constructor(
-        private val recipesDao: RecipesDao
+        private val recipesDao: RecipesDao,
+        private val favoriteDao: FavoriteRecipeDao
 ) {
-
 
     suspend fun insertRecipes(recipes: List<RecipeResult>){
         Log.e("TAG", "start caching local ${recipes.map { it.title }}")
@@ -30,5 +32,22 @@ class LocalDataSource @Inject constructor(
 
     fun getRecipes(): Flow<List<RecipeResult>>{
         return recipesDao.getRecipes()
+    }
+
+
+    suspend fun insertFavoriteRecipes(recipe: FavoriteRecipe){
+        favoriteDao.insert(recipe)
+    }
+
+    suspend fun deleteFavoriteRecipes(){
+        favoriteDao.deleteAllRecipes()
+    }
+
+    suspend fun deleteFavoriteRecipesByEntity(recipe: FavoriteRecipe){
+        favoriteDao.deleteRecipesById(recipe)
+    }
+
+    fun getFavoriteRecipes(): Flow<List<FavoriteRecipe>>{
+        return favoriteDao.getRecipes()
     }
 }
