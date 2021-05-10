@@ -38,4 +38,5 @@ class DatabaseModule {
     fun provideFavoriteRecipeDao(database:FoodDatabase): FavoriteRecipeDao{
         return database.favoriteRecipeDao()
     }
+
 }

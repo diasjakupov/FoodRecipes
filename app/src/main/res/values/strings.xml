@@ -40,4 +40,6 @@
     <string name="healthy">Healthy</string>
     <string name="cheap">Cheap</string>
     <string name="ingredientimageview">ingredientImageView</string>
+    <string name="save_to_favorite">Save To Favorite</string>
+    <string name="no_favorite_recipes">No favorite recipes</string>
 </resources>

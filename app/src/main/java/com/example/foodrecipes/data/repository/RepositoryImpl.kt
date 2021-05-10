@@ -38,8 +38,8 @@ class RepositoryImpl @Inject constructor(
         localDataSource.insertFavoriteRecipes(entity)
     }
 
-    override suspend fun deleteFavoriteRecipe(entity: FavoriteRecipe) {
-        localDataSource.deleteFavoriteRecipesByEntity(entity)
+    override suspend fun deleteFavoriteRecipe(id: Int) {
+        localDataSource.deleteFavoriteRecipesById(id)
     }
 
     override suspend fun deleteAllFavoriteRecipes() {

@@ -53,7 +53,7 @@ class RecipesFragmentViewModel @Inject constructor(
         }
 
 
-    val recipeEntities: LiveData<List<RecipeResult>?> =
+    val recipeEntities: LiveData<List<RecipeResult>> =
         Transformations.map(repositoryImpl.recipeEntities) {
         return@map it
     }

@@ -8,6 +8,6 @@ interface Repository {
     suspend fun searchRecipeSafeCall(queries:Map<String, String>)
     suspend fun insertRecipes(entities: List<RecipeResult>)
     suspend fun insertFavoriteRecipe(entity: FavoriteRecipe)
-    suspend fun deleteFavoriteRecipe(entity: FavoriteRecipe)
+    suspend fun deleteFavoriteRecipe(id: Int)
     suspend fun deleteAllFavoriteRecipes()
 }

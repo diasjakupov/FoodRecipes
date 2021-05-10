@@ -16,10 +16,10 @@
         android:theme="@style/Theme.FoodRecipes"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.activities.DetailsActivity"
+            android:name=".ui.activities.detail.DetailsActivity"
             android:label="Details"
             android:theme="@style/DetailsToolBar" />
-        <activity android:name=".ui.activities.MainActivity">
+        <activity android:name=".ui.activities.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

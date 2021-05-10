@@ -149,9 +149,8 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun getRecipesEntities() {
-
         viewModel.recipeEntities.observeOnce(viewLifecycleOwner, {
-            if (!args.isFromBottomSheet && it != null) {
+            if (!args.isFromBottomSheet && it.isNotEmpty()) {
                 Log.e("TAG", "get database")
                 adapter.updateData(it)
                 disableShimmerEffect()
