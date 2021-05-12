@@ -1,6 +1,5 @@
 package com.example.foodrecipes.ui.adapters.binding
 
-import android.view.ContextMenu
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,14 +16,6 @@ import org.jsoup.Jsoup
 class ItemBinding {
     companion object{
 
-        @BindingAdapter("onItemClick")
-        @JvmStatic
-        fun onItemClickListener(layout: ConstraintLayout, result:RecipeResult){
-            layout.setOnClickListener {
-                val action=RecipesFragmentDirections.actionRecipesFragmentToDetailsActivity(result)
-                layout.findNavController().navigate(action)
-            }
-        }
 
         @BindingAdapter("setNumberOfLikes")
         @JvmStatic

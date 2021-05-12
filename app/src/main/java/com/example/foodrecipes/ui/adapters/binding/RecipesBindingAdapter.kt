@@ -4,15 +4,27 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
+import androidx.navigation.findNavController
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.utils.NetworkResult
+import com.example.foodrecipes.ui.fragments.recipes.RecipesFragmentDirections
 import java.lang.Error
 
 class RecipesBindingAdapter {
 
     companion object{
+        @BindingAdapter("onRecipeClick")
+        @JvmStatic
+        fun onRecipeItemClickListener(layout: ConstraintLayout, result:RecipeResult){
+            layout.setOnClickListener {
+                val action= RecipesFragmentDirections.actionRecipesFragmentToDetailsActivity(result)
+                layout.findNavController().navigate(action)
+            }
+        }
+
         @BindingAdapter("readApiResponseImage",
             "readDataImage",
             "searchedApiResponseImage",

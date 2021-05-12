@@ -1,0 +1,23 @@
+package com.example.foodrecipes.ui.fragments.favorite
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import com.example.foodrecipes.data.db.models.entities.FavoriteRecipe
+import com.example.foodrecipes.data.repository.RepositoryImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+
+@HiltViewModel
+class FavoriteViewModel @Inject constructor(
+    repository: RepositoryImpl,
+    application: Application
+) : AndroidViewModel(application){
+    private var _favoriteEntities: LiveData<List<FavoriteRecipe>> =
+        Transformations.map(repository.favoriteRecipeEntities){
+            return@map it
+        }
+    val favoriteEntities get() = _favoriteEntities
+}

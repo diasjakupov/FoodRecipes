@@ -14,19 +14,19 @@ import kotlinx.android.parcel.Parcelize
 @TypeConverters(IngredientsTypeConverter::class)
 @Parcelize
 data class RecipeResult(
-        val aggregateLikes: Int?,
-        val cheap: Boolean?,
-        val dairyFree: Boolean?,
-        val extendedIngredients: List<ExtendedIngredient>?,
-        val glutenFree: Boolean?,
-        @PrimaryKey(autoGenerate = false) val id: Int,
-        val image: String?,
-        val readyInMinutes: Int?,
-        val sourceName: String?,
-        val sourceUrl: String?,
-        val summary: String?,
-        val title: String?,
-        val vegan: Boolean?,
-        val vegetarian: Boolean?,
-        val veryHealthy: Boolean?
-): Parcelable
+    val aggregateLikes: Int?,
+    val cheap: Boolean?,
+    val dairyFree: Boolean?,
+    val extendedIngredients: List<ExtendedIngredient>?,
+    val glutenFree: Boolean?,
+    @PrimaryKey(autoGenerate = false) val id: Int,
+    val image: String?,
+    val readyInMinutes: Int?,
+    val sourceName: String?,
+    val sourceUrl: String?,
+    val summary: String?,
+    val title: String?,
+    val vegan: Boolean?,
+    val vegetarian: Boolean?,
+    val veryHealthy: Boolean?
+) : Parcelable
