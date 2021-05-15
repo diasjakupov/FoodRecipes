@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_favoriteRecipesFragment_to_detailsActivity"
             app:destination="@id/detailsActivity" />
+        <action
+            android:id="@+id/action_favoriteRecipesFragment_to_favoriteAlertDialog"
+            app:destination="@id/favoriteAlertDialog" />
     </fragment>
     <fragment
         android:id="@+id/jokeFragment"
@@ -53,4 +56,14 @@
             android:name="result"
             app:argType="com.example.foodrecipes.data.db.models.entities.RecipeResult" />
     </activity>
+    <dialog
+        android:id="@+id/favoriteAlertDialog"
+        android:name="com.example.foodrecipes.ui.fragments.favorite.FavoriteAlertDialog"
+        android:label="FavoriteAlertDialog" >
+        <action
+            android:id="@+id/action_favoriteAlertDialog_to_favoriteRecipesFragment"
+            app:destination="@id/favoriteRecipesFragment" />
+        <argument android:name="ids" app:argType="integer[]"/>
+        <argument android:name="functionHolder" app:argType="com.example.foodrecipes.ui.adapters.FavoriteAdapter$functionHolder"/>
+    </dialog>
 </navigation>

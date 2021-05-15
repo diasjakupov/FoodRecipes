@@ -1,5 +1,6 @@
 package com.example.foodrecipes.ui.adapters.binding
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,14 +14,6 @@ import com.example.foodrecipes.ui.fragments.recipes.RecipesFragmentDirections
 class FavoriteBinding {
     companion object{
 
-        @BindingAdapter("onFavoriteClick")
-        @JvmStatic
-        fun onFavoriteItemClickListener(layout: ConstraintLayout, value: RecipeResult){
-            layout.setOnClickListener {
-                val action= FavoriteRecipesFragmentDirections.actionFavoriteRecipesFragmentToDetailsActivity(value)
-                layout.findNavController().navigate(action)
-            }
-        }
 
         @JvmStatic
         @BindingAdapter("checkDataValid", requireAll = true)
@@ -28,11 +21,14 @@ class FavoriteBinding {
              view: View,
              data: List<FavoriteRecipe>?
          ){
-                if(data.isNullOrEmpty()){
+            Log.e("TAG", "$data from bindning")
+            if (data != null) {
+                if(data.isEmpty()){
                     view.visibility=View.VISIBLE
                 }else{
                     view.visibility=View.INVISIBLE
                 }
+            }
 
          }
     }
