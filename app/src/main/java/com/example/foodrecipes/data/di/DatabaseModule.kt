@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.foodrecipes.data.db.FoodDatabase
 import com.example.foodrecipes.data.db.dao.FavoriteRecipeDao
+import com.example.foodrecipes.data.db.dao.FoodJokeDao
 import com.example.foodrecipes.data.db.dao.RecipesDao
 import dagger.Module
 import dagger.Provides
@@ -39,4 +40,10 @@ class DatabaseModule {
         return database.favoriteRecipeDao()
     }
 
+
+    @Singleton
+    @Provides
+    fun provideFoodJokeDao(database:FoodDatabase): FoodJokeDao{
+        return database.foodJoke()
+    }
 }

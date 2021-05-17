@@ -7,6 +7,7 @@ import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodrecipes.R
 import com.example.foodrecipes.data.db.models.entities.FavoriteRecipe
@@ -54,8 +55,13 @@ class FavoriteRecipesFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId==R.id.deleteAllFavorites){
-                viewModel.deleteAllFavorite()
-                Snackbar.make(binding.root, "All recipes removed", Snackbar.LENGTH_SHORT).show()
+                val action=FavoriteRecipesFragmentDirections.actionFavoriteRecipesFragmentToFavoriteAlertDialog(
+                    FunctionHolder{
+                        viewModel.deleteAllFavorite()
+                        Snackbar.make(binding.root, "All recipes removed", Snackbar.LENGTH_SHORT).show()
+                    }
+                )
+            findNavController().navigate(action)
         }
         return true
     }

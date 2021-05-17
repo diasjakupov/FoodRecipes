@@ -18,8 +18,10 @@ import com.example.foodrecipes.databinding.RecipeItemBinding
 import com.example.foodrecipes.ui.fragments.favorite.FavoriteAlertDialog
 import com.example.foodrecipes.ui.fragments.favorite.FavoriteRecipesFragmentDirections
 import com.example.foodrecipes.ui.fragments.favorite.FavoriteViewModel
+import com.example.foodrecipes.ui.fragments.favorite.FunctionHolder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.favorite_item.view.*
+import kotlinx.android.synthetic.main.fragment_favorite_recipes.*
 import java.io.Serializable
 
 class FavoriteAdapter(
@@ -89,8 +91,18 @@ class FavoriteAdapter(
         if(item?.itemId==R.id.deleteFavoriteItem){
             val action=FavoriteRecipesFragmentDirections
                 .actionFavoriteRecipesFragmentToFavoriteAlertDialog(
-                    selectedRecipes.map { it.result.id }.toIntArray()
-                    ,functionHolder( { mode?.finish() }, {selectedRecipes.clear()})
+                    FunctionHolder {
+                        selectedRecipes.forEach {
+                            viewModel.deleteFromFavoriteById(it.result.id)
+                        }
+                        mode?.finish()
+                        Snackbar.make(
+                            mView,
+                            "${selectedRecipes.size} has been deleted",
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                        selectedRecipes.clear()
+                    }
                 )
             mView.findNavController().navigate(action)
             multiSelection=false
@@ -170,6 +182,4 @@ class FavoriteAdapter(
             }
         }
     }
-
-    class functionHolder(val onClick: ()->Unit, val clearList: ()->Unit): Serializable
 }

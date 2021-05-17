@@ -58,12 +58,6 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
                 viewModel.showNetworkStatus()
             }
         }
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             networkListener = NetworkListener()
             networkListener.checkNetworkConnection(requireContext()).collect {
@@ -73,7 +67,11 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
                 getRecipesEntities()
             }
         }
+
+
+        return binding.root
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.recipes_menu, menu)
@@ -101,7 +99,7 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
             when (response) {
                 is NetworkResult.Success -> {
                     disableShimmerEffect()
-                    response.data?.let { adapter.updateData(it.results) }
+                    response.data?.let { adapter.updateData(it.results.sortedByDescending { value->value.aggregateLikes }) }
                 }
                 is NetworkResult.Error -> {
                     disableShimmerEffect()

@@ -3,8 +3,10 @@ package com.example.foodrecipes.data.datasource
 import android.util.Log
 import androidx.lifecycle.asLiveData
 import com.example.foodrecipes.data.db.dao.FavoriteRecipeDao
+import com.example.foodrecipes.data.db.dao.FoodJokeDao
 import com.example.foodrecipes.data.db.dao.RecipesDao
 import com.example.foodrecipes.data.db.models.entities.FavoriteRecipe
+import com.example.foodrecipes.data.db.models.entities.FoodJokeEntity
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -18,7 +20,8 @@ import kotlin.reflect.jvm.javaType
 
 class LocalDataSource @Inject constructor(
         private val recipesDao: RecipesDao,
-        private val favoriteDao: FavoriteRecipeDao
+        private val favoriteDao: FavoriteRecipeDao,
+        private val foodJokeDao: FoodJokeDao
 ) {
 
     suspend fun insertRecipes(recipes: List<RecipeResult>){
@@ -34,7 +37,6 @@ class LocalDataSource @Inject constructor(
         return recipesDao.getRecipes()
     }
 
-
     suspend fun insertFavoriteRecipes(recipe: FavoriteRecipe){
         favoriteDao.insert(recipe)
     }
@@ -49,5 +51,13 @@ class LocalDataSource @Inject constructor(
 
     fun getFavoriteRecipes(): Flow<List<FavoriteRecipe>>{
         return favoriteDao.getRecipes()
+    }
+
+    suspend fun insertFoodJoke(joke:FoodJokeEntity){
+        foodJokeDao.insertFoodJoke(joke)
+    }
+
+    fun getFoodJoke(): Flow<List<FoodJokeEntity>>{
+        return foodJokeDao.getFoodJoke()
     }
 }

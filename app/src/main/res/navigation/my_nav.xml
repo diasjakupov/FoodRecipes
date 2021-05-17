@@ -63,7 +63,7 @@
         <action
             android:id="@+id/action_favoriteAlertDialog_to_favoriteRecipesFragment"
             app:destination="@id/favoriteRecipesFragment" />
-        <argument android:name="ids" app:argType="integer[]"/>
-        <argument android:name="functionHolder" app:argType="com.example.foodrecipes.ui.adapters.FavoriteAdapter$functionHolder"/>
+        <argument android:name="functionHolder"
+            app:argType="com.example.foodrecipes.ui.fragments.favorite.FunctionHolder" />
     </dialog>
 </navigation>

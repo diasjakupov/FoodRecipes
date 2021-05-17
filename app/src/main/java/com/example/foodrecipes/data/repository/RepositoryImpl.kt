@@ -7,12 +7,12 @@ import androidx.lifecycle.asLiveData
 import com.example.foodrecipes.data.datasource.LocalDataSource
 import com.example.foodrecipes.data.db.models.FoodRecipeResponse
 import com.example.foodrecipes.data.datasource.RemoteDataSource
+import com.example.foodrecipes.data.db.models.FoodJoke
 import com.example.foodrecipes.data.db.models.entities.FavoriteRecipe
+import com.example.foodrecipes.data.db.models.entities.FoodJokeEntity
 import com.example.foodrecipes.data.db.models.entities.RecipeResult
 import com.example.foodrecipes.data.utils.NetworkResult
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import retrofit2.Response
 import java.lang.Exception
 import javax.inject.Inject
@@ -27,6 +27,8 @@ class RepositoryImpl @Inject constructor(
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
     var searchedRecipesResponse: MutableLiveData<NetworkResult<FoodRecipeResponse>> = MutableLiveData()
     val recipeEntities: LiveData<List<RecipeResult>> = localDataSource.getRecipes().asLiveData()
+    val foodJokeResponse=MutableLiveData<NetworkResult<FoodJoke>>()
+    val foodJokeEntity: LiveData<List<FoodJokeEntity>> = localDataSource.getFoodJoke().asLiveData()
     val favoriteRecipeEntities: LiveData<List<FavoriteRecipe>> = localDataSource.getFavoriteRecipes().asLiveData()
 
     override suspend fun insertRecipes(entities: List<RecipeResult>) {
@@ -46,6 +48,10 @@ class RepositoryImpl @Inject constructor(
         localDataSource.deleteFavoriteRecipes()
     }
 
+    override suspend fun insertFoodJoke(foodJoke: FoodJokeEntity) {
+        localDataSource.insertFoodJoke(foodJoke)
+    }
+
     override suspend fun getResponseSafeCall(queries: Map<String, String>) {
         recipesResponse.value = NetworkResult.Loading()
         if (InternetConnection.hasInternetConnection()) {
@@ -54,7 +60,7 @@ class RepositoryImpl @Inject constructor(
                 recipesResponse.value = handleFoodRecipesResponse(response)
                 val foodRecipe=recipesResponse.value!!.data
                 if(foodRecipe != null){
-                    startCaching(foodRecipe)
+                    startRecipeCaching(foodRecipe)
                 }
             } catch (e: Exception) {
                 Log.e("TAG", e.toString())
@@ -71,12 +77,9 @@ class RepositoryImpl @Inject constructor(
         if (InternetConnection.hasInternetConnection()) {
             try {
                 val response = remoteDataSource.searchRecipes(queries)
-                Log.e("TAG", "from searching ${response.body()}")
                 if(response.body()?.results?.size == 0){
-                    Log.e("TAG", "size equals to zero")
                     searchedRecipesResponse.value= NetworkResult.Error("Not Found")
                 }else{
-                    Log.e("TAG", "size doesn't equal to zero")
                     searchedRecipesResponse.value = handleFoodRecipesResponse(response)
                 }
             } catch (e: Exception) {
@@ -85,6 +88,42 @@ class RepositoryImpl @Inject constructor(
 
         } else {
             recipesResponse.value = NetworkResult.Error("No Internet Connection")
+        }
+    }
+
+    override suspend fun getRandomFoodJokeSafeCall() {
+        foodJokeResponse.value=NetworkResult.Loading()
+        if(InternetConnection.hasInternetConnection()){
+            try{
+                val response= remoteDataSource.getRandomJoke()
+                foodJokeResponse.value=handleFoodJoke(response)
+                val foodJoke=foodJokeResponse.value!!.data
+                Log.e("TAG", "before caching")
+                if(foodJoke!=null){
+                    startJokeCaching(FoodJokeEntity(foodJoke = foodJoke))
+                }
+            }catch(e:Exception){
+                Log.e("TAG", "${e.message} error")
+                foodJokeResponse.value = NetworkResult.Error("ERROR")
+            }
+        } else {
+            foodJokeResponse.value = NetworkResult.Error("No Internet Connection")
+        }
+    }
+
+    private fun handleFoodJoke(response: Response<FoodJoke>):NetworkResult<FoodJoke> {
+        return when {
+            response.message().toString().contains("timeout") -> NetworkResult.Error("Timeout")
+            response.code() == 402 -> {
+                NetworkResult.Error("API key limited")
+            }
+            response.isSuccessful -> {
+                NetworkResult.Success(response.body()!!)
+            }
+
+            else -> {
+                NetworkResult.Error(response.message())
+            }
         }
     }
 
@@ -108,8 +147,11 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun startCaching(foodRecipeResponse: FoodRecipeResponse){
-        Log.e("TAG", "start caching ${foodRecipeResponse.results.map { it.title }}")
+    private suspend fun startJokeCaching(foodJoke: FoodJokeEntity){
+        insertFoodJoke(foodJoke)
+    }
+
+    private suspend fun startRecipeCaching(foodRecipeResponse: FoodRecipeResponse){
         insertRecipes(foodRecipeResponse.results)
     }
 }
