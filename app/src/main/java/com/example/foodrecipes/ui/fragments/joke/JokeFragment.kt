@@ -1,11 +1,10 @@
 package com.example.foodrecipes.ui.fragments.joke
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -24,6 +23,7 @@ class JokeFragment : Fragment() {
     private var _binding: FragmentJokeBinding? = null
     private lateinit var loading:LoadingFragment
     private val binding get() = _binding!!
+    private var foodJoke=""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,13 +33,16 @@ class JokeFragment : Fragment() {
         binding.viewModel=viewModel
         binding.lifecycleOwner=this
         loading= LoadingFragment()
-
+        setHasOptionsMenu(true)
         viewModel.getFoodJoke()
         viewModel.foodJokeResponse.observe(viewLifecycleOwner, {
             when(it){
                 is NetworkResult.Success->{
                     dismissLoadingFragment()
                     binding.foodJokeTV.text=it.data?.text
+                    if(it.data?.text!=null){
+                        foodJoke= it.data.text
+                    }
                 }
                 is NetworkResult.Error->{
                     dismissLoadingFragment()
@@ -54,11 +57,29 @@ class JokeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.food_joke_menu, menu)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId==R.id.shareJoke){
+            val intent= Intent().apply {
+                this.action=Intent.ACTION_SEND
+                this.putExtra(Intent.EXTRA_TEXT, foodJoke)
+                this.type="text/plain"
+            }
+            startActivity(intent)
+        }
+        return true
+    }
+
     private fun loadLocalCache(){
         lifecycleScope.launch {
             viewModel.foodJokeEntity.observe(viewLifecycleOwner, {
                 if(!it.isNullOrEmpty()){
                     binding.foodJokeTV.text=it.first().text
+                    foodJoke=it.first().text
                 }else{
                     binding.materialCardView.visibility=View.INVISIBLE
                 }

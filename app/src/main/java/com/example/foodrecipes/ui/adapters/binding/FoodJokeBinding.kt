@@ -29,7 +29,7 @@ class FoodJokeBinding {
                 }
             }
             if(response is NetworkResult.Success){
-                view.visibility=View.VISIBLE
+                view.visibility=View.INVISIBLE
             }
         }
     }

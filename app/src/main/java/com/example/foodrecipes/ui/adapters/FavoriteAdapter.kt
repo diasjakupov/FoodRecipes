@@ -46,21 +46,16 @@ class FavoriteAdapter(
         val currentResult=recipe[position]
         holder.bind(currentResult)
         holder.itemView.recipeItem.setOnClickListener {
-            Log.e("TAG", "one click")
             if(multiSelection){
-                Log.e("TAG", "one click $multiSelection")
                 applySelection(holder, currentResult)
             }else{
-                Log.e("TAG", "one click $multiSelection")
                 val action= FavoriteRecipesFragmentDirections.actionFavoriteRecipesFragmentToDetailsActivity(currentResult.result)
                 holder.itemView.findNavController().navigate(action)
             }
         }
 
         holder.itemView.recipeItem.setOnLongClickListener {
-            Log.e("TAG", "long click")
             if(!multiSelection) {
-                Log.e("TAG", "long click $multiSelection")
                 multiSelection = true
                 activity.startActionMode(this)
                 applySelection(holder, currentResult)

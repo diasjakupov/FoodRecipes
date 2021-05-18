@@ -22,19 +22,19 @@
     <color name="checkedChipBg">#206200EA</color>
     <color name="ChipBg">@color/lightGray</color>
 
-    <color name="strokeColor">@color/lightMediumGray</color>
-    <color name="cardBackground">@color/white</color>
-    <color name="actionBarBackgroundColor">@color/colorPrimary</color>
+    <color name="strokeColor">@color/mediumGray</color>
+    <color name="cardBackground">@color/darker</color>
+    <color name="actionBarBackgroundColor">@color/darker</color>
     <color name="lightColorPrimary">#106200EA</color>
-    <color name="titleColor">@color/darker</color>
-    <color name="descriptionColor">@color/darkGray</color>
+    <color name="titleColor">@color/mediumGray</color>
+    <color name="descriptionColor">@color/mediumGray</color>
 
-    <color name="statusBarColor">@color/colorPrimaryDark</color>
+    <color name="statusBarColor">@color/black</color>
     <color name="contextualColor">@color/darker</color>
     <color name="contextualActionBarColor">@color/dark</color>
-    <color name="fragmentBackground">@color/lightGray</color>
+    <color name="fragmentBackground">@color/dark</color>
 
-    <color name="bottomNavColor">@color/white</color>
-    <color name="bottomNavItemColor">@color/darkGray</color>
-    <color name="bottom_checked_nav_item">@color/colorPrimary</color>
+    <color name="bottomNavColor">@color/darker</color>
+    <color name="bottomNavItemColor">@color/mediumGray</color>
+    <color name="bottom_checked_nav_item">@color/colorAccent</color>
 </resources>

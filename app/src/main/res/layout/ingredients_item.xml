@@ -55,7 +55,7 @@
                 tools:text="TextView"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/ingredientTitleColor"
+                android:textColor="@color/titleColor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/white_background"
                 app:layout_constraintTop_toTopOf="parent" />
