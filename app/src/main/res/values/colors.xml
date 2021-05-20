@@ -37,4 +37,7 @@
     <color name="bottomNavColor">@color/white</color>
     <color name="bottomNavItemColor">@color/darkGray</color>
     <color name="bottom_checked_nav_item">@color/colorPrimary</color>
+
+    <color name="placeHolderColor">@color/mediumGray</color>
+    <color name="categoryDetailItemColor">@color/darker</color>
 </resources>

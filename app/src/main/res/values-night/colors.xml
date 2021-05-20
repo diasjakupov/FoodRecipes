@@ -17,10 +17,10 @@
     <color name="green">#00C980</color>
 
 
-    <color name="checkedChipText">@color/colorPrimary</color>
-    <color name="ChipText">@color/darkGray</color>
-    <color name="checkedChipBg">#206200EA</color>
-    <color name="ChipBg">@color/lightGray</color>
+    <color name="checkedChipText">@color/lightGray</color>
+    <color name="ChipText">@color/lightGray</color>
+    <color name="checkedChipBg">@color/dark</color>
+    <color name="ChipBg">@color/darker</color>
 
     <color name="strokeColor">@color/mediumGray</color>
     <color name="cardBackground">@color/darker</color>
@@ -30,11 +30,15 @@
     <color name="descriptionColor">@color/mediumGray</color>
 
     <color name="statusBarColor">@color/black</color>
-    <color name="contextualColor">@color/darker</color>
-    <color name="contextualActionBarColor">@color/dark</color>
+    <color name="contextualColor">@color/black</color>
+    <color name="contextualActionBarColor">@color/darker</color>
     <color name="fragmentBackground">@color/dark</color>
 
     <color name="bottomNavColor">@color/darker</color>
     <color name="bottomNavItemColor">@color/mediumGray</color>
     <color name="bottom_checked_nav_item">@color/colorAccent</color>
+
+
+    <color name="placeHolderColor">@color/darker</color>
+    <color name="categoryDetailItemColor">@color/mediumGray</color>
 </resources>

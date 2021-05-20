@@ -11,7 +11,7 @@
     android:id="@+id/fragmentFavorite"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGray"
+    android:background="@color/fragmentBackground"
     tools:context=".ui.fragments.favorite.FavoriteRecipesFragment">
 
 
